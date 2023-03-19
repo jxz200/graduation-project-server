@@ -12,12 +12,14 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
 @Slf4j
 @RestController
 @RequestMapping("/employee")
 public class EmployeeController {
     @Autowired
     private EmployeeService employeeService;
+
     @PostMapping("/login")
     public R<Employee> login(HttpServletRequest request, @RequestBody Employee employee) {
         // 对用户输入密码进行md5加密
@@ -41,5 +43,12 @@ public class EmployeeController {
         // 将id存入session，返回查询结果
         request.getSession().setAttribute("employee", emp.getId());
         return R.success(emp);
+    }
+
+    @PostMapping("/logout")
+    public R<String> logout(HttpServletRequest request) {
+        // 删除session
+        request.getSession().removeAttribute("employee");
+        return R.success("退出成功");
     }
 }
