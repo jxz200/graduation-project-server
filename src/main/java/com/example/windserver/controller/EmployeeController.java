@@ -4,15 +4,14 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.example.windserver.common.R;
 import com.example.windserver.domain.Employee;
 import com.example.windserver.service.EmployeeService;
+import com.example.windserver.utils.SHA256Util;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.util.DigestUtils;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-
 @Slf4j
 @RestController
 @RequestMapping("/employee")
@@ -22,9 +21,9 @@ public class EmployeeController {
 
     @PostMapping("/login")
     public R<Employee> login(HttpServletRequest request, @RequestBody Employee employee) {
-        // 对用户输入密码进行md5加密
+        // 对用户输入密码进行SHA-256加密
         String password = employee.getPassword();
-        password = DigestUtils.md5DigestAsHex(password.getBytes());
+        password = SHA256Util.hash(password);
         // 查询数据库，获取当前用户信息
         LambdaQueryWrapper<Employee> queryWrapper = new LambdaQueryWrapper<>();
         queryWrapper.eq(Employee::getUsername, employee.getUsername());
@@ -50,5 +49,12 @@ public class EmployeeController {
         // 删除session
         request.getSession().removeAttribute("employee");
         return R.success("退出成功");
+    }
+
+    @PostMapping
+    public R<String> addEmployee(@RequestBody Employee employee) {
+
+        employee.setPassword("123456");
+        return null;
     }
 }
