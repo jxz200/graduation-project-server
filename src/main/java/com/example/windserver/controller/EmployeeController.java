@@ -4,7 +4,7 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.example.windserver.common.R;
 import com.example.windserver.domain.Employee;
 import com.example.windserver.service.EmployeeService;
-import com.example.windserver.utils.SHA256Util;
+import com.example.windserver.utils.PasswordEncryptionUtil;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,9 +21,6 @@ public class EmployeeController {
 
     @PostMapping("/login")
     public R<Employee> login(HttpServletRequest request, @RequestBody Employee employee) {
-        // 对用户输入密码进行SHA-256加密
-        String password = employee.getPassword();
-        password = SHA256Util.hash(password);
         // 查询数据库，获取当前用户信息
         LambdaQueryWrapper<Employee> queryWrapper = new LambdaQueryWrapper<>();
         queryWrapper.eq(Employee::getUsername, employee.getUsername());
@@ -32,8 +29,10 @@ public class EmployeeController {
         if (emp == null) {
             return R.error("查询不到该用户");
         }
+        // 对用户输入密码进行SHA-256加密
+        String password = employee.getPassword();
         // 如果查询到的密码和用户输入密码不匹配，就返回登录失败
-        if (!emp.getPassword().equals(password)) {
+        if (!PasswordEncryptionUtil.isPasswordMatching(password, emp.getPassword(), emp.getSalt())) {
             return R.error("用户名密码不匹配");
         }
         if (emp.getStatus() == 0) {

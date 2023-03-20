@@ -1,17 +1,15 @@
 package com.example.windserver.domain;
 
-import com.baomidou.mybatisplus.annotation.IdType;
-import com.baomidou.mybatisplus.annotation.TableField;
-import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
+
+import java.io.Serial;
 import java.io.Serializable;
 import java.util.Date;
+
 import lombok.Data;
 
-/**
- * @TableName employee
- */
-@TableName(value ="employee")
+
+@TableName(value = "employee")
 @Data
 public class Employee implements Serializable {
     private Long id;
@@ -21,6 +19,7 @@ public class Employee implements Serializable {
     private String username;
 
     private String password;
+
 
     private String phone;
 
@@ -37,6 +36,8 @@ public class Employee implements Serializable {
     private Long createUser;
 
     private Long updateUser;
+    private String salt;
 
+    @Serial
     private static final long serialVersionUID = 1L;
 }
