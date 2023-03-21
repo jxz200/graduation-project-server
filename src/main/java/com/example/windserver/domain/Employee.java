@@ -1,6 +1,6 @@
 package com.example.windserver.domain;
 
-import com.baomidou.mybatisplus.annotation.TableName;
+import com.baomidou.mybatisplus.annotation.*;
 
 import java.io.Serial;
 import java.io.Serializable;
@@ -12,6 +12,7 @@ import lombok.Data;
 @TableName(value = "employee")
 @Data
 public class Employee implements Serializable {
+    @TableId(type = IdType.ASSIGN_ID)
     private Long id;
 
     private String name;
@@ -29,8 +30,10 @@ public class Employee implements Serializable {
 
     private Integer status;
 
+    @TableField(fill = FieldFill.INSERT)
     private Date createTime;
 
+    @TableField(fill = FieldFill.INSERT_UPDATE)
     private Date updateTime;
 
     private Long createUser;

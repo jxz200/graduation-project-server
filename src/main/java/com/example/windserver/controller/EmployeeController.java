@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
 @Slf4j
 @RestController
 @RequestMapping("/employee")
@@ -53,10 +54,14 @@ public class EmployeeController {
     }
 
     @PostMapping
-    public R<String> addEmployee(@RequestBody Employee employee) {
+    public R<String> addEmployee(HttpServletRequest request ,@RequestBody Employee employee) {
         final String salt = PasswordEncryptionUtil.generateSalt();
         employee.setPassword(PasswordEncryptionUtil.hashPassword("123456", salt));
         employee.setSalt(salt);
-        return null;
+        final Long empId = (Long) request.getSession().getAttribute("employee");
+        employee.setCreateUser(empId);
+        employee.setUpdateUser(empId);
+        employeeService.save(employee);
+        return R.success("新增员工成功");
     }
 }
