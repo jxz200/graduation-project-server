@@ -8,7 +8,6 @@ import java.util.Date;
 
 import lombok.Data;
 
-
 @TableName(value = "employee")
 @Data
 public class Employee implements Serializable {
@@ -20,7 +19,6 @@ public class Employee implements Serializable {
     private String username;
 
     private String password;
-
 
     private String phone;
 

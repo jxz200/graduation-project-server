@@ -1,16 +1,15 @@
 package com.example.windserver.controller;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.example.windserver.common.R;
 import com.example.windserver.domain.Employee;
 import com.example.windserver.service.EmployeeService;
 import com.example.windserver.utils.PasswordEncryptionUtil;
+import io.micrometer.common.util.StringUtils;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @Slf4j
 @RestController
@@ -63,5 +62,14 @@ public class EmployeeController {
         employee.setUpdateUser(empId);
         employeeService.save(employee);
         return R.success("新增员工成功");
+    }
+    @GetMapping("/page")
+    public R<Page<Employee>> page(int page, int pageSize, String name) {
+        Page<Employee> pageInfo = new Page<>(page, pageSize);
+        final LambdaQueryWrapper<Employee> queryWrapper = new LambdaQueryWrapper<>();
+        queryWrapper.like(StringUtils.isNotEmpty(name), Employee::getName, name);
+        queryWrapper.orderByDesc(Employee::getUpdateTime);
+        employeeService.page(pageInfo, queryWrapper);
+        return R.success(pageInfo);
     }
 }
