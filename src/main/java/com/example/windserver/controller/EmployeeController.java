@@ -53,7 +53,7 @@ public class EmployeeController {
     }
 
     @PostMapping
-    public R<String> addEmployee(HttpServletRequest request ,@RequestBody Employee employee) {
+    public R<String> addEmployee(HttpServletRequest request, @RequestBody Employee employee) {
         final String salt = PasswordEncryptionUtil.generateSalt();
         employee.setPassword(PasswordEncryptionUtil.hashPassword("123456", salt));
         employee.setSalt(salt);
@@ -63,6 +63,7 @@ public class EmployeeController {
         employeeService.save(employee);
         return R.success("新增员工成功");
     }
+
     @GetMapping("/page")
     public R<Page<Employee>> page(int page, int pageSize, String name) {
         Page<Employee> pageInfo = new Page<>(page, pageSize);
@@ -71,5 +72,13 @@ public class EmployeeController {
         queryWrapper.orderByDesc(Employee::getUpdateTime);
         employeeService.page(pageInfo, queryWrapper);
         return R.success(pageInfo);
+    }
+
+    @PutMapping
+    public R<String> update(HttpServletRequest request, @RequestBody Employee employee) {
+        final Long empId = (Long) request.getSession().getAttribute("employee");
+        employee.setUpdateUser(empId);
+        employeeService.updateById(employee);
+        return R.success("修改员工信息成功");
     }
 }
